@@ -1,12 +1,15 @@
-import { ApolloProvider } from "@apollo/client";
-import logo from "./logo.svg";
-import "./App.css";
-import { ApolloClient, InMemoryCache } from "@apollo/client";
-import { gql } from "@apollo/client";
+import {
+  ApolloProvider,
+  ApolloClient,
+  InMemoryCache,
+  gql
+} from '@apollo/client';
+import logo from './logo.svg';
+import './App.css';
 
 const client = new ApolloClient({
-  uri: "https://prime-tetra-59.hasura.app/v1/graphql",
-  cache: new InMemoryCache(),
+  uri: 'https://prime-tetra-59.hasura.app/v1/graphql',
+  cache: new InMemoryCache()
 });
 
 client
@@ -15,14 +18,16 @@ client
       query GetAccounts {
         accounts(where: {}) {
           name
-          transactions(where: {amount: {_gte: 100000}}) {
+          transactions(
+            where: { amount: { _gte: 100000 } }
+          ) {
             id
           }
         }
       }
-    `,
+    `
   })
-  .then((result) => console.log(result));
+  .then(result => console.log(result));
 
 function App() {
   return (
