@@ -4,26 +4,41 @@ import {
   InMemoryCache,
   gql
 } from '@apollo/client';
-import logo from './logo.svg';
-import './App.css';
+import { types } from 'mobx-state-tree';
+import {
+  BrowserRouter,
+  Route,
+  Switch
+} from 'react-router-dom';
+import Home from './pages/Home';
+import getQueryFromModel from './helpers/getQueryFromModel';
 
 const client = new ApolloClient({
-  uri: 'https://prime-tetra-59.hasura.app/v1/graphql',
+  uri: process.env.REACT_APP_API_URL,
   cache: new InMemoryCache()
+});
+
+const TransactionStore = types.model('Transaction', {
+  id: types.identifier,
+  amount: types.optional(types.number, 0)
+});
+
+const AccountStore = types.model('Account', {
+  id: types.identifier,
+  transactions: types.optional(
+    types.array(TransactionStore),
+    []
+  )
 });
 
 client
   .query({
     query: gql`
       query GetAccounts {
-        accounts(where: {}) {
-          name
-          transactions(
-            where: { amount: { _gte: 100000 } }
-          ) {
-            id
-          }
-        }
+        ${getQueryFromModel('accounts', AccountStore, {
+          accounts: {},
+          transactions: { amount: { _gte: 1000000 } }
+        })}
       }
     `
   })
@@ -31,24 +46,21 @@ client
 
 function App() {
   return (
-    <ApolloProvider client={client}>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    </ApolloProvider>
+    <BrowserRouter>
+      <ApolloProvider client={client}>
+        <Switch>
+          <Route
+            path="/test"
+            component={() => <p>Test success</p>}
+          />
+          <Route
+            path="/:notfound"
+            component={() => <p>404</p>}
+          />
+          <Route path="/" component={Home} />
+        </Switch>
+      </ApolloProvider>
+    </BrowserRouter>
   );
 }
 
