@@ -25,7 +25,7 @@ const getQueryFromModel = (
       queries[modelName]
         ? `(where: ${JSON.stringify(queries[modelName])
             .replace(/"/g, '')
-            .replace(/`/g, '"')})`
+            .replace(/#/g, '"')})`
         : ''
     }\n${getQueryFromModel(
       '',
@@ -38,7 +38,7 @@ const getQueryFromModel = (
     queries[modelName]
       ? `(where: ${JSON.stringify(queries[modelName])
           .replace(/"/g, '')
-          .replace(/`/g, '"')})`
+          .replace(/#/g, '"')})`
       : ''
   }{\n${Object.entries(model.properties)
     .map(([propName, propValue]) =>

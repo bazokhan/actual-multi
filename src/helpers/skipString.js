@@ -1,1 +1,1 @@
-export default strings => `${strings}`;
+export default strings => `#${strings}#`;

@@ -8,7 +8,7 @@ import store, {
 const { expect, it, beforeAll } = global;
 
 const originalWarn = console.warn.bind(console.warn);
-console.dev = console.log;
+console.log = console.log;
 
 store.updateItems(items);
 

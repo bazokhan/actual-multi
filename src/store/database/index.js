@@ -28,7 +28,7 @@ db.version(3)
 
 db.open().catch(err => {
   // eslint-disable-next-line no-console
-  console.dev('Opening error', err);
+  console.log('Opening error', err);
 });
 
 const loadDB = async () => {
@@ -46,7 +46,7 @@ const loadDB = async () => {
     ]);
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
   }
 };
 
@@ -76,7 +76,7 @@ export const addList = async listData => {
     return list;
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
     return null;
   }
 };
@@ -99,7 +99,7 @@ export const getColumns = async (
     }
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
   }
   return columns;
 };
@@ -122,7 +122,7 @@ export const getSorting = async (
     }
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
   }
   return sorting;
 };
@@ -134,7 +134,7 @@ export const upsertColumns = async columnsData => {
     return columns;
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
     return null;
   }
 };
@@ -148,7 +148,7 @@ export const upsertSorting = async sortingData => {
     return sortings;
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
     return null;
   }
 };
@@ -167,7 +167,7 @@ export const upsertList = async listData => {
     }
   } catch (err) {
     // eslint-disable-next-line no-console
-    console.dev(err);
+    console.log(err);
     list = await addList(listData);
     return list;
   }
