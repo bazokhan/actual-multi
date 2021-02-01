@@ -1,7 +1,8 @@
-import { useMutation } from '@apollo/client';
+import { useMutation, useQuery } from '@apollo/client';
 import { Button, FormLabel, Input } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import insertOne from '../../helpers/insertOne';
+import select from '../../helpers/select';
 import AccountStore from '../../models/Account.store';
 
 const Home = () => {
@@ -18,14 +19,28 @@ const Home = () => {
     });
   };
 
-  // console.log(insertAccountMutation);
+  const { data, loading, error } = useQuery(
+    select('accounts', AccountStore)
+  );
+
+  // const { data, loading, error } = useQuery(
+  //   select('accounts', AccountStore, {
+  //     accounts: { name: { _eq: $`Telescan` } }
+  //   })
+  // );
+
+  console.log(data, loading, error);
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <FormLabel htmlFor="name">
-        <Input id="name" name="name" ref={register} />
-      </FormLabel>
-      <Button type="submit">Submit</Button>
-    </form>
+    <>
+      <div />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <FormLabel htmlFor="name">
+          <Input id="name" name="name" ref={register} />
+        </FormLabel>
+        <Button type="submit">Submit</Button>
+      </form>
+    </>
   );
 };
 

@@ -6,6 +6,18 @@ const getMutationFromModel = (
 ) => {
   if (!model) return modelName;
   if (
+    model?._types?.length === 2 &&
+    model._types[0] &&
+    model._types[0].name.toLowerCase() ===
+      modelName.toLowerCase()
+  ) {
+    return getMutationFromModel(
+      modelName,
+      model._types[0],
+      originalModelName
+    );
+  }
+  if (
     Array.isArray(model._defaultValue) &&
     model._subtype
   ) {
