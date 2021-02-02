@@ -1,7 +1,10 @@
 import { Flex, IconButton } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
-import React from 'react';
+import {
+  ChevronUpIcon,
+  ChevronDownIcon
+} from '@chakra-ui/icons';
 
 const SortingButtons = ({ store, name }) => (
   <Flex
@@ -12,11 +15,11 @@ const SortingButtons = ({ store, name }) => (
     height="30px"
   >
     <IconButton
-      icon="angle-up"
+      icon={<ChevronUpIcon />}
       onClick={() => store.sort(name, 'desc')}
       size="sm"
-      bg="bg.900"
-      color="text.800"
+      bg="gray.700"
+      color="white"
       mb={1}
       _focus={{ borderWidth: 0 }}
       _hover={{ bg: 'blueHover' }}
@@ -26,11 +29,11 @@ const SortingButtons = ({ store, name }) => (
       }
     />
     <IconButton
-      icon="angle-down"
+      icon={<ChevronDownIcon />}
       onClick={() => store.sort(name, 'asc')}
       size="sm"
-      bg="bg.900"
-      color="text.800"
+      bg="gray.700"
+      color="white"
       _focus={{ borderWidth: 0 }}
       _hover={{ bg: 'blueHover' }}
       isActive={

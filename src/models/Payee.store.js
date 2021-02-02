@@ -1,10 +1,9 @@
 import { types } from 'mobx-state-tree';
 
-const AccountStore = types.model('account', {
+const PayeeStore = types.model('payee', {
   id: types.identifier,
   name: types.maybeNull(types.string),
-  // owner: types.maybeNull(AccountStore),
-  // payee: types.maybeNull(PayeeStore),
+  // account: types.maybeNull(AccountStore),
   tombstone: types.maybeNull(types.number)
   // transactions: types.optional(
   //   types.array(TransactionStore),
@@ -15,4 +14,4 @@ const AccountStore = types.model('account', {
   // )
 });
 
-export default AccountStore;
+export default PayeeStore;
