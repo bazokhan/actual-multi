@@ -1,6 +1,6 @@
 import { types } from 'mobx-state-tree';
 import extend from '../../../helpers/extend';
-import generate from '../../../store';
+import generate from '../../../stores/ListStore';
 import TransactionModel from './TransactionModel';
 
 const TransactionsList = generate(

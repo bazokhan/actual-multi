@@ -1,8 +1,9 @@
 /* eslint-disable no-console */
-import { render, screen } from '@testing-library/react';
-import App from '.';
+import CalendarStore from '.';
 
-const { expect, beforeAll } = global;
+const { describe, it, expect, beforeAll } = global;
+
+const store = CalendarStore.create({});
 
 const originalWarn = console.warn.bind(console.warn);
 const originalLog = console.log.bind(console.log);
@@ -35,8 +36,19 @@ beforeAll(() => {
   };
 });
 
-test('renders learn react link', () => {
-  render(<App />);
-  const linkElement = screen.getByText(/Submit/i);
-  expect(linkElement).toBeInTheDocument();
+describe('Calendar Store', () => {
+  it('should be created with default values', () => {
+    expect(store).not.toBeNull();
+
+    store.calendarStartDate.updateDate(
+      new Date('11/24/2020')
+    );
+    store.calendarEndDate.updateDate(
+      new Date('11/29/2020')
+    );
+    console.log(store.calendarDateRange);
+
+    expect(store.calendarDateRange).not.toBeNull();
+    expect(store.calendarDateRange).toHaveLength(6);
+  });
 });

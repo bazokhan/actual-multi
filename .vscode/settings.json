@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "*.js": "javascriptreact"
+    },
+    "jest.debugMode": true,
+    "jest.pathToJest": "yarn test"
+}
