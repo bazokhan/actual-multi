@@ -8,6 +8,38 @@ const TransactionsList = generate(
     index: types.maybeNull(types.number)
   }),
   {
+    selectFilters: [
+      {
+        name: 'account',
+        isMulti: true,
+        getter: item => item.account
+      },
+      {
+        name: 'category',
+        isMulti: true,
+        getter: item => item.category
+      },
+      {
+        name: 'payee',
+        isMulti: true,
+        getter: item =>
+          item.payee?.name
+            ? item.payee
+            : item.payee?.account
+      }
+    ],
+    switchFilters: [
+      {
+        name: 'paid',
+        getter: item => item.amount < 0,
+        skip: true
+      },
+      {
+        name: 'recieved',
+        getter: item => item.amount > 0,
+        skip: true
+      }
+    ],
     sortFilters: [
       {
         name: 'index',
@@ -56,6 +88,4 @@ const TransactionsList = generate(
   }
 );
 
-const store = TransactionsList.create({});
-
-export default store;
+export default TransactionsList;

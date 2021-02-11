@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { useLazyQuery, useQuery } from '@apollo/client';
 import {
   Button,
-  Checkbox,
   Drawer,
   DrawerBody,
   DrawerCloseButton,
@@ -12,21 +10,21 @@ import {
   DrawerHeader,
   DrawerOverlay,
   Flex,
-  Grid,
-  Spinner,
-  Text,
   useColorMode
 } from '@chakra-ui/react';
 import { v4 as uuid } from 'uuid';
 import { observer } from 'mobx-react';
 import { getSnapshot } from 'mobx-state-tree';
-import AccountStore from '../../../models/Account.store';
-import select from '../../../helpers/select';
 import ReportStore from '../../../stores/ReportStore';
-import MultiSelect from '../../../components/MultiSelect';
-import DatePicker from '../../../components/DatePicker';
-import TransactionModel from '../store/TransactionModel';
 import mapTDataToTStore from '../../../helpers/mapTDataToTStore';
+import Step0 from './ReportCreationSteps/Step0-AccountStoreSelect';
+import Step1 from './ReportCreationSteps/Step1-DateStore';
+import Step2 from './ReportCreationSteps/Step2-ReportStore';
+import Step3 from './ReportCreationSteps/Step3-TStoreSelectCategory';
+import Step4 from './ReportCreationSteps/Step4-TStoreSelectPayee';
+import Step5 from './ReportCreationSteps/Step5-Success';
+import useReportLazyQueries from '../hooks/useReportLazyQueries';
+import useAccounts from '../hooks/useAccounts';
 
 const reportStore = ReportStore.create({ id: uuid() });
 
@@ -38,180 +36,74 @@ const ReportCreationWizard = ({
   const [step, setStep] = useState(0);
 
   const {
-    data: accountsData,
+    transactionsQuery,
+    transactionsError,
+    transactionsLoading,
+    transactionsAggregateQuery
+  } = useReportLazyQueries({
+    onTransactionsQueryCompleted: nextData => {
+      const properTransactions = nextData?.transactions?.map(
+        mapTDataToTStore
+      );
+      reportStore.transactions.updateItems(
+        properTransactions
+      );
+      setStep(step + 1);
+    },
+    onAggregateQueryCompleted: nextData => {
+      console.log(nextData);
+    }
+  });
+
+  const {
+    accounts,
     loading: accountsLoading,
     error: accountsError
-  } = useQuery(select('accounts', AccountStore));
-
-  const accounts = useMemo(() => accountsData?.accounts, [
-    accountsData
-  ]);
+  } = useAccounts();
 
   useEffect(() => {
     reportStore.accounts.updateItems(accounts);
   }, [accounts]);
 
-  const [
-    transactionsQuery,
-    { error, loading }
-  ] = useLazyQuery(
-    select(
-      'transactions',
-      TransactionModel,
-      {
-        transactions: {
-          account: {
-            id: {
-              _in: '$accounts'
-            }
-          },
-          date: {
-            _gt: '$startDate',
-            _lt: '$endDate'
-          }
-        }
-      },
-      '($accounts: [uuid!], $startDate: date, $endDate: date)'
-    ),
-    {
-      onCompleted: nextData => {
-        const properTransactions = nextData?.transactions?.map(
-          mapTDataToTStore
-        );
-        reportStore.transactions.updateItems(
-          properTransactions
-        );
-        setStep(step + 1);
-      }
-    }
-  );
-
   const { colorMode } = useColorMode();
 
-  if (!isOpen) return null;
+  const onAccountDateSelection = async () => {
+    await transactionsQuery({
+      variables: {
+        accounts: reportStore.accounts.filteredByIdFilter.map(
+          a => a.id
+        ),
+        startDate: reportStore.date.calendarStartDate.mdy,
+        endDate: reportStore.date.calendarEndDate.mdy
+      }
+    });
+  };
 
-  const step3 = (
-    <Flex direction="column">
-      {reportStore.transactions.categoryOptions.map(
-        category => {
-          const isChecked = reportStore.transactions.categoryFilter.includes(
-            category.value.id
-          );
-          return (
-            <Checkbox
-              key={category.value.id}
-              isChecked={isChecked}
-              onChange={() => {
-                reportStore.transactions.toggleCategoryFilter(
-                  category
-                );
-              }}
-            >
-              {category.label}
-            </Checkbox>
-          );
-        }
-      )}
-    </Flex>
-  );
+  const onCategoryPayeeSelection = async () => {
+    await transactionsAggregateQuery({
+      variables: {
+        accounts: reportStore.accounts.filteredByIdFilter.map(
+          a => a.id
+        ),
+        startDate: reportStore.date.calendarStartDate.mdy,
+        endDate: reportStore.date.calendarEndDate.mdy,
+        categories: reportStore.transactions.categoryFilter,
+        payees: reportStore.transactions.payeeFilter
+      }
+    });
+    setStep(step + 1);
+  };
 
-  const step4 = (
-    <Flex direction="column">
-      {reportStore.transactions.payeeOptions.map(payee => {
-        const isChecked = reportStore.transactions.payeeFilter.includes(
-          payee.value.id
-        );
-        return (
-          <Checkbox
-            key={payee.value.id}
-            isChecked={isChecked}
-            onChange={() => {
-              reportStore.transactions.togglePayeeFilter(
-                payee
-              );
-            }}
-          >
-            {payee.value?.name ||
-              payee.value?.account?.name}
-          </Checkbox>
-        );
-      })}
-    </Flex>
-  );
-
-  const step0 = accountsError ? (
-    <Text>Something went wrong!</Text>
-  ) : accountsLoading ? (
-    <Spinner />
-  ) : (
-    <>
-      <MultiSelect
-        title="Accounts"
-        name="id"
-        store={reportStore.accounts}
-      />
-    </>
-  );
-
-  const step1 = (
-    <Grid
-      gridTemplateRows="auto auto"
-      rowGap="20px"
-      padding="20px"
-    >
-      <Flex direction="column">
-        <Text>Start Date: </Text>
-        <Text
-          margin="0 0 10px"
-          fontWeight="bold"
-          color={
-            colorMode === 'light'
-              ? 'main1.800'
-              : 'main1.200'
-          }
-        >
-          {reportStore.date.calendarStartDate.string}
-        </Text>
-        <DatePicker
-          store={reportStore.date.calendarStartDate}
-        />
-      </Flex>
-      <Flex direction="column">
-        <Text>End Date: </Text>
-        <Text
-          margin="0 0 10px"
-          fontWeight="bold"
-          color={
-            colorMode === 'light'
-              ? 'main1.800'
-              : 'main1.200'
-          }
-        >
-          {reportStore.date.calendarEndDate.string}
-        </Text>
-        <DatePicker
-          store={reportStore.date.calendarEndDate}
-        />
-      </Flex>
-    </Grid>
-  );
-
-  const step2 = (
-    <>
-      <Text>Generating Report For:</Text>
-      <Text>
-        {reportStore.accounts.filteredByIdFilter
-          .map(a => a.name)
-          .join(', ')}
-      </Text>
-      <Text>
-        {reportStore.date.calendarStartDate.string}
-      </Text>
-      <Text>{reportStore.date.calendarEndDate.string}</Text>
-    </>
-  );
-
-  const step5 = <Text>Success. Close</Text>;
+  const onAggregateQuery = () => {
+    onConfirm({
+      transactions: reportStore.transactions.sortedItems.map(
+        getSnapshot
+      ),
+      loading: transactionsLoading,
+      error: transactionsError
+    });
+    setStep(step + 1);
+  };
 
   return (
     <Drawer
@@ -229,12 +121,26 @@ const ReportCreationWizard = ({
         <DrawerHeader>Create Report</DrawerHeader>
 
         <DrawerBody>
-          {step === 0 ? step0 : null}
-          {step === 1 ? step1 : null}
-          {step === 2 ? step2 : null}
-          {step === 3 ? step3 : null}
-          {step === 4 ? step4 : null}
-          {step === 5 ? step5 : null}
+          {step === 0 ? (
+            <Step0
+              loading={accountsLoading}
+              error={accountsError}
+              store={reportStore.accounts}
+            />
+          ) : null}
+          {step === 1 ? (
+            <Step1 store={reportStore.date} />
+          ) : null}
+          {step === 2 ? (
+            <Step2 store={reportStore} />
+          ) : null}
+          {step === 3 ? (
+            <Step3 store={reportStore.transactions} />
+          ) : null}
+          {step === 4 ? (
+            <Step4 store={reportStore.transactions} />
+          ) : null}
+          {step === 5 ? <Step5 /> : null}
         </DrawerBody>
 
         <DrawerFooter>
@@ -251,33 +157,12 @@ const ReportCreationWizard = ({
             <Button
               onClick={
                 step === 2
-                  ? async () => {
-                      await transactionsQuery({
-                        variables: {
-                          accounts: reportStore.accounts.filteredByIdFilter.map(
-                            a => a.id
-                          ),
-                          startDate:
-                            reportStore.date
-                              .calendarStartDate.mdy,
-                          endDate:
-                            reportStore.date.calendarEndDate
-                              .mdy
-                        }
-                      });
-                    }
+                  ? onAccountDateSelection
                   : step === 4
-                  ? () => {
-                      onConfirm({
-                        transactions: reportStore.transactions.sortedItems.map(
-                          getSnapshot
-                        ),
-                        loading,
-                        error
-                      });
-                      setStep(step + 1);
-                    }
+                  ? onCategoryPayeeSelection
                   : step === 5
+                  ? onAggregateQuery
+                  : step === 6
                   ? onCancel
                   : () => setStep(step + 1)
               }

@@ -21,6 +21,11 @@ const AccountsListStore = generate(AccountStore, {
 const TransactionsListStore = generate(TransactionModel, {
   selectFilters: [
     {
+      name: 'account',
+      isMulti: true,
+      getter: item => item.account
+    },
+    {
       name: 'category',
       isMulti: true,
       getter: item => item.category

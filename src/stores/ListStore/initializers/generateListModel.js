@@ -24,6 +24,7 @@ import addonViews from '../views/addon.views';
 import addonActions from '../actions/addon.actions';
 import extendModel from './extendModel';
 import applyAddons from './applyAddons';
+import switchFilterViews from '../views/switchFilter.views';
 
 const generateListModel = (
   model,
@@ -61,6 +62,7 @@ const generateListModel = (
     .views(itemsViews(sortFilters))
     .views(selectViews(selectFilters))
     .views(selectFilterViews(selectFilters))
+    .views(switchFilterViews(switchFilters))
     .views(selectOptionsViews(selectFilters))
     .views(addonViews({ appliedAddons, addons }))
     .views(

@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import { observer } from 'mobx-react';
@@ -8,7 +8,8 @@ import TransactionsTable from './TransactionsTable';
 const TransactionsTableCell = ({
   gql,
   tableSize,
-  store
+  store,
+  ...props
 }) => {
   const { data, loading, error } = useQuery(gql);
 
@@ -22,14 +23,13 @@ const TransactionsTableCell = ({
   }, [store, transactions]);
 
   return (
-    <>
-      <TransactionsTable
-        loading={loading}
-        error={error}
-        store={store}
-        tableSize={tableSize}
-      />
-    </>
+    <TransactionsTable
+      loading={loading}
+      error={error}
+      store={store}
+      tableSize={tableSize}
+      {...props}
+    />
   );
 };
 

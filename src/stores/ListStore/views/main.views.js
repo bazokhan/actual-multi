@@ -48,6 +48,7 @@ export default ({
     return searchFilters?.length
       ? searchFilters.reduce((prev, filter) => {
           if (!filter?.getter) return prev;
+          if (filter.skip) return prev;
           const filterName = `${filter.name}Filter`;
           const getValue = filter.getter;
           return prev.filter(item => {
@@ -116,6 +117,7 @@ export default ({
     return switchFilters?.length
       ? switchFilters.reduce((prev, filter) => {
           if (!filter?.getter) return prev;
+          if (filter.skip) return prev;
           const filterName = `${filter.name}Filter`;
           const getValue = filter.getter;
           return prev.filter(item =>

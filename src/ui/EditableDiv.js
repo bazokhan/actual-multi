@@ -2,7 +2,8 @@ import PropTypes from 'prop-types';
 import {
   Editable,
   EditableInput,
-  EditablePreview
+  EditablePreview,
+  useColorMode
 } from '@chakra-ui/react';
 
 const EditableDiv = ({
@@ -12,6 +13,7 @@ const EditableDiv = ({
   color,
   rtl
 }) => {
+  const { colorMode } = useColorMode();
   const styles = {
     padding: '4px 8px',
     border: 'solid 2px transparent',
@@ -23,7 +25,7 @@ const EditableDiv = ({
     borderRadius: '5px',
     fontSize: '13px',
     textAlign: rtl ? 'right' : 'left',
-    color: color || 'gray.50',
+    color: color || 'inherit',
     outline: 'none',
     _hover: {
       border: 'dashed 2px #ddd',
@@ -43,7 +45,10 @@ const EditableDiv = ({
       isDisabled={isDisabled}
     >
       <EditablePreview {...styles} />
-      <EditableInput {...styles} bg="gray.700" />
+      <EditableInput
+        {...styles}
+        bg={colorMode === 'light' ? 'bg.300' : 'bg.700'}
+      />
     </Editable>
   );
 };

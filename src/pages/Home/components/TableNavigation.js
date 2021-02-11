@@ -15,12 +15,14 @@ const TableNavigation = ({
   getLastPage,
   getFirstPage,
   getPrevPage,
-  getNextPage
+  getNextPage,
+  ...props
 }) => (
   <Grid
     gridTemplateColumns="auto auto 1fr auto auto"
     height="100%"
     overflowY="auto"
+    {...props}
   >
     <IconButton
       colorScheme="gray"
