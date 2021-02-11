@@ -8,6 +8,7 @@ import {
 import { BrowserRouter } from 'react-router-dom';
 import { ChakraProvider } from '@chakra-ui/react';
 import { setContext } from '@apollo/client/link/context';
+import theme from './theme';
 
 const httpLink = createHttpLink({
   uri: process.env.REACT_APP_API_URL
@@ -29,7 +30,9 @@ const client = new ApolloClient({
 const AppProvider = ({ children }) => (
   <BrowserRouter>
     <ApolloProvider client={client}>
-      <ChakraProvider>{children}</ChakraProvider>
+      <ChakraProvider theme={theme}>
+        {children}
+      </ChakraProvider>
     </ApolloProvider>
   </BrowserRouter>
 );

@@ -12,10 +12,15 @@ export default selectFilters => self =>
     const optionsName = `${filter.name}Options`;
     prev = assign(prev, {
       get [optionsName]() {
-        return self[filter.name].map(item => ({
-          label: item,
-          value: self[filterName]?.includes(item) || false
-        }));
+        return self[filter.name].map(item =>
+          typeof item === 'object' && item.id && item.name
+            ? { label: item.name, value: item }
+            : {
+                label: item,
+                value:
+                  self[filterName]?.includes(item) || false
+              }
+        );
       }
     });
     return prev;

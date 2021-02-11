@@ -80,15 +80,32 @@ export default ({
           const getValue = filter.getter;
           return prev.filter(item => {
             const value = getValue(item);
+            const isObject =
+              typeof value === 'object' && value?.id;
+            const isArrayOfObjects =
+              typeof value?.[0] === 'object' &&
+              value?.[0]?.id;
             return self[filterName]?.length
               ? filter.isMulti
                 ? Array.isArray(value)
-                  ? self[filterName].some(f =>
-                      value.includes(f)
-                    )
+                  ? isArrayOfObjects
+                    ? self[filterName].some(f =>
+                        value.map(i => i?.id).includes(f)
+                      )
+                    : self[filterName].some(f =>
+                        value.includes(f)
+                      )
+                  : isObject
+                  ? self[filterName].includes(value?.id)
                   : self[filterName].includes(value)
                 : Array.isArray(value)
-                ? value.includes(self[filterName])
+                ? isArrayOfObjects
+                  ? value
+                      .map(i => i?.id)
+                      .includes(self[filterName])
+                  : value.includes(self[filterName])
+                : isObject
+                ? self[filterName] === value?.id
                 : self[filterName] === value
               : item;
           });

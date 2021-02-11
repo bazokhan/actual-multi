@@ -22,9 +22,6 @@ const CalendarStore = types
     datePickerDate: types.maybeNull(DateStore),
     datePickerStartDate: types.maybeNull(DateStore),
     datePickerEndDate: types.maybeNull(DateStore),
-    datePickerPosition: types.maybeNull(
-      types.model({ x: types.number, y: types.number })
-    ),
     newEvent: types.optional(CalendarEventStore, {
       id: 'NEW_EVENT'
     }),
@@ -42,9 +39,6 @@ const CalendarStore = types
     }
   }))
   .actions(self => ({
-    updateDatePickerPosition: newPosition => {
-      self.datePickerPosition = newPosition;
-    },
     resetNewEvent: () => {
       self.newEvent.updateTitle('');
       self.newEvent.updateDate(null);

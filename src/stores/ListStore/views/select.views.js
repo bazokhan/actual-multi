@@ -13,20 +13,43 @@ export default selectFilters => self =>
         return self.items.reduce((p, item) => {
           const getValue = filter.getter;
           const value = getValue(item);
+          if (
+            typeof value === 'object' &&
+            value?.id &&
+            value?.name
+          ) {
+            if (
+              p.map(i => i?.id).indexOf(value?.id) === -1
+            ) {
+              p.push(value);
+            }
+            return Array.isArray(value)
+              ? p
+                  .flat()
+                  .filter(v => v?.id)
+                  .filter(
+                    (v, i, arr) =>
+                      arr
+                        .map(it => it?.id)
+                        .indexOf(v?.id) === i
+                  )
+              : p
+                  .filter(v => v?.id)
+                  .filter(
+                    (v, i, arr) =>
+                      arr
+                        .map(it => it?.id)
+                        .indexOf(v?.id) === i
+                  );
+          }
           if (value && p.indexOf(value) === -1) {
             p.push(value);
           }
           return Array.isArray(value)
             ? p
                 .flat()
-                .filter(
-                  (platform, i, arr) =>
-                    arr.indexOf(platform) === i
-                )
-            : p.filter(
-                (platform, i, arr) =>
-                  arr.indexOf(platform) === i
-              );
+                .filter((v, i, arr) => arr.indexOf(v) === i)
+            : p.filter((v, i, arr) => arr.indexOf(v) === i);
         }, []);
       }
     });

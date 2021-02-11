@@ -14,24 +14,24 @@ const originalError = console.error.bind(console.error);
 beforeAll(() => {
   console.warn = msg => {
     if (
-      msg.toString().includes('indexedDB') ||
-      msg.toString().includes('Dexie')
+      msg?.toString().includes('indexedDB') ||
+      msg?.toString().includes('Dexie')
     )
       return;
     originalWarn(msg);
   };
   console.log = msg => {
     if (
-      msg.toString().includes('indexedDB') ||
-      msg.toString().includes('Dexie')
+      msg?.toString().includes('indexedDB') ||
+      msg?.toString().includes('Dexie')
     )
       return;
     originalLog(msg);
   };
   console.error = msg => {
     if (
-      msg.toString().includes('indexedDB') ||
-      msg.toString().includes('Dexie')
+      msg?.toString().includes('indexedDB') ||
+      msg?.toString().includes('Dexie')
     )
       return;
     originalError(msg);
@@ -43,7 +43,7 @@ store.updateItems(items);
 describe('Columns Tests', () => {
   beforeAll(() => {
     console.warn = msg =>
-      !msg.toString().includes('indexedDB') &&
+      !msg?.toString().includes('indexedDB') &&
       originalWarn(msg);
   });
   it('Updating Columns Work', () => {

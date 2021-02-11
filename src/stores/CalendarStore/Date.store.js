@@ -1,6 +1,7 @@
 /* eslint-disable no-param-reassign */
 import { types } from 'mobx-state-tree';
 import { MONTHS } from '../../constants';
+import formatDate from '../../helpers/formatDate';
 import getDaysInMonth from '../../helpers/getDaysInMonth';
 import getDaysInMonthWithOffset from '../../helpers/getDaysInMonthWithOffset';
 
@@ -8,13 +9,19 @@ const DateStore = types
   .model('Date', {
     raw: types.Date,
     mode: types.optional(
-      types.enumeration(['day', 'week', 'month']),
+      types.enumeration(['day', 'week', 'month', 'year']),
       'month'
+    ),
+    position: types.maybeNull(
+      types.model({ x: types.number, y: types.number })
     )
   })
   .views(self => ({
     get string() {
-      return self.raw.toDateString();
+      return formatDate(self.raw);
+    },
+    get mdy() {
+      return formatDate(self.raw, 'mdy');
     },
     get year() {
       return self.raw.getFullYear();
@@ -69,6 +76,9 @@ const DateStore = types
         self.daysInCurrentMonth,
         self.daysInNextMonth
       ].flat();
+    },
+    get timestamp() {
+      return self.raw.getTime();
     }
   }))
   .actions(self => ({
@@ -77,6 +87,9 @@ const DateStore = types
     },
     updateMode: newMode => {
       self.mode = newMode;
+    },
+    updatePosition: newPosition => {
+      self.position = newPosition;
     }
   }));
 
