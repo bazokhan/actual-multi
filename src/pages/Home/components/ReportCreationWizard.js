@@ -51,6 +51,7 @@ const ReportCreationWizard = ({
       setStep(step + 1);
     },
     onAggregateQueryCompleted: nextData => {
+      // eslint-disable-next-line no-console
       console.log(nextData);
     }
   });
