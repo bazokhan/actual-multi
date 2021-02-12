@@ -16,7 +16,7 @@ export default switchFilters => self =>
     prev = assign(prev, {
       get [filterByName]() {
         return self[filterName]
-          ? self.items.filter(item => getValue(item))
+          ? self.sortedItems.filter(item => getValue(item))
           : [];
       }
     });

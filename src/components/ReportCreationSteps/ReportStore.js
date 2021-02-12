@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 
-const Step2 = ({ store }) => (
+const ReportStoreStep = ({ store }) => (
   <>
     <Text>Generating Report For:</Text>
     <Text>
@@ -15,8 +15,8 @@ const Step2 = ({ store }) => (
   </>
 );
 
-Step2.propTypes = {
+ReportStoreStep.propTypes = {
   store: PropTypes.object.isRequired
 };
 
-export default observer(Step2);
+export default observer(ReportStoreStep);

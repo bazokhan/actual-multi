@@ -7,7 +7,7 @@ import {
 } from '@chakra-ui/react';
 import DatePicker from '../DatePicker';
 
-const Step1 = ({ store }) => {
+const DateStoreStep = ({ store }) => {
   const { colorMode } = useColorMode();
   return (
     <Grid
@@ -49,8 +49,8 @@ const Step1 = ({ store }) => {
   );
 };
 
-Step1.propTypes = {
+DateStoreStep.propTypes = {
   store: PropTypes.object.isRequired
 };
 
-export default Step1;
+export default DateStoreStep;

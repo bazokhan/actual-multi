@@ -10,9 +10,21 @@ export default selectFilters => self =>
   selectFilters?.reduce((prev, filter) => {
     const filterName = `${filter.name}Filter`;
     const optionsName = `${filter.name}Options`;
+    const currentOptionsName = `current_${filter.name}Options`;
     prev = assign(prev, {
       get [optionsName]() {
         return self[filter.name].map(item =>
+          typeof item === 'object' && item.id && item.name
+            ? { label: item.name, value: item }
+            : {
+                label: item,
+                value:
+                  self[filterName]?.includes(item) || false
+              }
+        );
+      },
+      get [currentOptionsName]() {
+        return self[`current_${filter.name}`].map(item =>
           typeof item === 'object' && item.id && item.name
             ? { label: item.name, value: item }
             : {

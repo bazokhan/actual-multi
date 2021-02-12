@@ -10,12 +10,12 @@ import {
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 import { getSnapshot } from 'mobx-state-tree';
-import Step0 from './ReportCreationSteps/AccountStoreSelect';
-import Step1 from './ReportCreationSteps/DateStore';
-import Step2 from './ReportCreationSteps/ReportStore';
-import Step3 from './ReportCreationSteps/TStoreSelectCategory';
-import Step4 from './ReportCreationSteps/TStoreSelectPayee';
-import Step5 from './ReportCreationSteps/SuccessMessage';
+import AccountStoreSelectStep from './ReportCreationSteps/AccountStoreSelect';
+import DateStoreStep from './ReportCreationSteps/DateStore';
+// import ReportStoreStep from './ReportCreationSteps/ReportStore';
+import TStoreSelectCategoryStep from './ReportCreationSteps/TStoreSelectCategory';
+import TStoreSelectPayeeStep from './ReportCreationSteps/TStoreSelectPayee';
+import SuccessMessageStep from './ReportCreationSteps/SuccessMessage';
 import mapTDataToTStore from '../helpers/mapTDataToTStore';
 import useReportLazyQueries from '../hooks/useReportLazyQueries';
 import useAccounts from '../hooks/useAccounts';
@@ -41,8 +41,10 @@ const ReportCreationWizard = ({
       setStep(step + 1);
     },
     onAggregateQueryCompleted: nextData => {
-      // eslint-disable-next-line no-console
-      console.log(nextData);
+      const properTransactions = nextData?.transactions_aggregate?.nodes?.map(
+        mapTDataToTStore
+      );
+      store.transactions.updateItems(properTransactions);
     }
   });
 
@@ -93,8 +95,52 @@ const ReportCreationWizard = ({
       loading: transactionsLoading,
       error: transactionsError
     });
-    setStep(step + 1);
   };
+
+  const steps = [
+    {
+      id: 0,
+      component: (
+        <AccountStoreSelectStep
+          loading={accountsLoading}
+          error={accountsError}
+          store={store.accounts}
+        />
+      ),
+      onNext: () => setStep(step + 1),
+      onPrev: onCancel
+    },
+    {
+      id: 1,
+      component: <DateStoreStep store={store.date} />,
+      onNext: onAccountDateSelection,
+      onPrev: () => setStep(step - 1)
+    },
+    {
+      id: 2,
+      component: (
+        <TStoreSelectCategoryStep
+          store={store.transactions}
+        />
+      ),
+      onNext: () => setStep(step + 1),
+      onPrev: () => setStep(step - 1)
+    },
+    {
+      id: 3,
+      component: (
+        <TStoreSelectPayeeStep store={store.transactions} />
+      ),
+      onNext: onCategoryPayeeSelection,
+      onPrev: () => setStep(step - 1)
+    },
+    {
+      id: 4,
+      component: <SuccessMessageStep />,
+      onNext: onAggregateQuery,
+      onPrev: () => setStep(step - 1)
+    }
+  ];
 
   return (
     <Grid
@@ -113,47 +159,14 @@ const ReportCreationWizard = ({
       <Heading>Create Report</Heading>
 
       <Box height="100%" overflowY="auto">
-        {step === 0 ? (
-          <Step0
-            loading={accountsLoading}
-            error={accountsError}
-            store={store.accounts}
-          />
-        ) : null}
-        {step === 1 ? <Step1 store={store.date} /> : null}
-        {step === 2 ? <Step2 store={store} /> : null}
-        {step === 3 ? (
-          <Step3 store={store.transactions} />
-        ) : null}
-        {step === 4 ? (
-          <Step4 store={store.transactions} />
-        ) : null}
-        {step === 5 ? <Step5 /> : null}
+        {steps[step].component}
       </Box>
 
       <Flex width="100%" justifyContent="space-between">
-        <Button
-          onClick={
-            step === 0 ? onCancel : () => setStep(step - 1)
-          }
-        >
+        <Button onClick={steps[step].onPrev}>
           Previous
         </Button>
-        <Button
-          onClick={
-            step === 2
-              ? onAccountDateSelection
-              : step === 4
-              ? onCategoryPayeeSelection
-              : step === 5
-              ? onAggregateQuery
-              : step === 6
-              ? onCancel
-              : () => setStep(step + 1)
-          }
-        >
-          Next
-        </Button>
+        <Button onClick={steps[step].onNext}>Next</Button>
       </Flex>
     </Grid>
   );

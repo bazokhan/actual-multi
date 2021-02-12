@@ -12,11 +12,11 @@ const Create = () => {
   const [error, setError] = useState(null);
 
   const onConfirm = async ({
-    transactions,
+    // transactions,
     loading: lazyLoading,
     error: lazyError
   }) => {
-    reportStore.updateItems(transactions);
+    // reportStore.transactions.updateItems(transactions);
     setLoading(lazyLoading);
     setError(lazyError);
   };

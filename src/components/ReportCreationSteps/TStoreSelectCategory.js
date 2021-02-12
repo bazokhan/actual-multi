@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { Checkbox, Flex } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 
-const Step3 = ({ store }) => {
+const TStoreSelectCategoryStep = ({ store }) => {
   const isAllChecked = store.categoryOptions.every(
     category =>
       store.categoryFilter.includes(category.value.id)
@@ -55,8 +55,8 @@ const Step3 = ({ store }) => {
   );
 };
 
-Step3.propTypes = {
+TStoreSelectCategoryStep.propTypes = {
   store: PropTypes.object.isRequired
 };
 
-export default observer(Step3);
+export default observer(TStoreSelectCategoryStep);
