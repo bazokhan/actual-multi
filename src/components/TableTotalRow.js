@@ -2,7 +2,7 @@ import { Flex, Text } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
-import sum from '../../../helpers/sum';
+import sum from '../helpers/sum';
 
 const TableTotalRow = ({ store }) => {
   useEffect(() => {

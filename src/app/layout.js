@@ -2,13 +2,7 @@ import { Grid } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
 
 const Layout = ({ children }) => (
-  <Grid
-    h="100vh"
-    w="100vw"
-    overflow="hidden"
-    alignItems="start"
-    alignContent="start"
-  >
+  <Grid h="100vh" w="100vw" overflow="hidden">
     {children}
   </Grid>
 );

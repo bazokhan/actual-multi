@@ -5,7 +5,7 @@ import {
   Flex,
   useColorMode
 } from '@chakra-ui/react';
-import DatePicker from '../../../../components/DatePicker';
+import DatePicker from '../DatePicker';
 
 const Step1 = ({ store }) => {
   const { colorMode } = useColorMode();

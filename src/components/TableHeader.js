@@ -1,6 +1,6 @@
 import { Flex, Text } from '@chakra-ui/react';
 import PropTypes from 'prop-types';
-import SortingButtons from '../../../components/SortingButtons';
+import SortingButtons from './SortingButtons';
 
 const TableHeader = ({ store }) => (
   <>

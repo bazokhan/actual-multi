@@ -1,10 +1,10 @@
 import { types } from 'mobx-state-tree';
-import extend from '../../../helpers/extend';
-import generate from '../../../stores/ListStore';
-import TransactionModel from './TransactionModel';
+import extend from '../helpers/extend';
+import TransactionRelationStore from './TransactionRelation.store';
+import generate from '../stores/ListStore';
 
-const TransactionsList = generate(
-  extend(TransactionModel, {
+const TransactionListStore = generate(
+  extend(TransactionRelationStore, {
     index: types.maybeNull(types.number)
   }),
   {
@@ -88,4 +88,4 @@ const TransactionsList = generate(
   }
 );
 
-export default TransactionsList;
+export default TransactionListStore;

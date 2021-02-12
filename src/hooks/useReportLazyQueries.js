@@ -1,9 +1,7 @@
 import { useLazyQuery } from '@apollo/client';
-import { types } from 'mobx-state-tree';
-import select from '../../../helpers/select';
-import TransactionModel from '../store/TransactionModel';
-import TransactionsAggregateStore from '../../../models/TransactionsAggregate.store';
-import extend from '../../../helpers/extend';
+import select from '../helpers/select';
+import TransactionsAggregateStore from '../models/TransactionsAggregate.store';
+import TransactionRelationStore from '../models/TransactionRelation.store';
 
 const queryFunctionParams =
   '($accounts: [uuid!], $startDate: date, $endDate: date)';
@@ -62,7 +60,7 @@ const useReportLazyQueries = ({
   ] = useLazyQuery(
     select(
       'transactions',
-      TransactionModel,
+      TransactionRelationStore,
       queryParams,
       queryFunctionParams
     ),
@@ -80,17 +78,7 @@ const useReportLazyQueries = ({
   ] = useLazyQuery(
     select(
       'transactions_aggregate',
-      extend(TransactionsAggregateStore, {
-        aggregate: types.model({
-          sum: types.model({
-            amount: types.maybeNull(types.number)
-          })
-        }),
-        nodes: types.optional(
-          types.array(TransactionModel),
-          []
-        )
-      }),
+      TransactionsAggregateStore,
       aggQueryParams,
       aggQueryFunctionParams
     ),

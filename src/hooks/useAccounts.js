@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import { useQuery } from '@apollo/client';
-import AccountStore from '../../../models/Account.store';
-import select from '../../../helpers/select';
+import AccountRelationStore from '../models/AccountRelation.store';
+import select from '../helpers/select';
 
 const useAccounts = () => {
   const { data: accountsData, loading, error } = useQuery(
-    select('accounts', AccountStore, {
+    select('accounts', AccountRelationStore, {
       accounts: { tombstone: { _eq: 0 } }
     }),
     {

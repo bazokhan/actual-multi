@@ -138,9 +138,12 @@ const DatePicker = ({ store, isFixed, ...props }) => {
       {store.mode === 'day' ? (
         <>
           <IconButton
-            padding="10px"
             size="md"
             variant="ghost"
+            minWidth="auto"
+            paddingLeft="0"
+            paddingRight="0"
+            padding="0"
             icon={<ChevronLeftIcon />}
             justifySelf="start"
             onClick={e => {
@@ -166,9 +169,12 @@ const DatePicker = ({ store, isFixed, ...props }) => {
             {MONTHS[month]} {year}
           </Button>
           <IconButton
-            padding="10px"
             size="md"
             variant="ghost"
+            minWidth="auto"
+            paddingLeft="0"
+            paddingRight="0"
+            padding="0"
             icon={<ChevronRightIcon />}
             justifySelf="end"
             onClick={e => {
@@ -183,12 +189,13 @@ const DatePicker = ({ store, isFixed, ...props }) => {
           {days.map(datePickerDay => (
             <Button
               variant="ghost"
-              width="20px"
-              minWidth="20px"
               paddingLeft="2px"
               paddingRight="2px"
               fontSize="12px"
-              height="20px"
+              width="25px"
+              height="25px"
+              minWidth="auto"
+              padding="0"
               key={datePickerDay.toDateString()}
               isActive={
                 store.timestamp === datePickerDay.getTime()

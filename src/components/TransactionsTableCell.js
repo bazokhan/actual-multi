@@ -2,7 +2,7 @@ import { useEffect, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import { useQuery } from '@apollo/client';
 import { observer } from 'mobx-react';
-import mapTDataToTStore from '../../../helpers/mapTDataToTStore';
+import mapTDataToTStore from '../helpers/mapTDataToTStore';
 import TransactionsTable from './TransactionsTable';
 
 const TransactionsTableCell = ({

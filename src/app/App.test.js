@@ -37,6 +37,6 @@ beforeAll(() => {
 
 test('renders learn react link', () => {
   render(<App />);
-  const linkElement = screen.getByText(/Submit/i);
+  const linkElement = screen.getByText(/Test Render/i);
   expect(linkElement).toBeInTheDocument();
 });

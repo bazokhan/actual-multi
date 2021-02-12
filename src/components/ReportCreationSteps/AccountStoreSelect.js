@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import { Text, Spinner } from '@chakra-ui/react';
-import MultiSelect from '../../../../components/MultiSelect';
+import MultiSelect from '../MultiSelect';
 
 const Step0 = ({ error, loading, store }) =>
   error ? (
