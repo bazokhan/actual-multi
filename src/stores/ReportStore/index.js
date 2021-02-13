@@ -13,7 +13,8 @@ const chunk = (transactions, prop) => {
   }
   return transactions.reduce((prev, t) => {
     const targetProp = prop.itemIdentifier(t);
-    if (!targetProp) return prev;
+    if (targetProp === undefined || targetProp === null)
+      return prev;
     const targetChunk = prev.find(c =>
       prop.validator(c, t)
     );
@@ -79,6 +80,34 @@ const ReportStore = types
             c.identifier.id === item.account?.id
         },
         {
+          name: 'date',
+          itemIdentifier: item => item.date,
+          chunkIdentifier: item => ({
+            name: `${item.date?.getFullYear()} / ${
+              item.date?.getMonth() + 1
+            }`,
+            value: item.date
+          }),
+          validator: (c, item) =>
+            c.identifier.value?.getMonth() ===
+              item.date?.getMonth() &&
+            c.identifier.value?.getFullYear() ===
+              item.date?.getFullYear()
+        },
+        {
+          name: 'type',
+          itemIdentifier: item => item.amount < 0,
+          chunkIdentifier: item =>
+            item.amount > 0
+              ? {
+                  name: 'recieved',
+                  value: false
+                }
+              : { name: 'paid', value: true },
+          validator: (c, item) =>
+            c.identifier.value === item.amount < 0
+        },
+        {
           name: 'category',
           itemIdentifier: item => item.category?.id,
           chunkIdentifier: item => item.category,
@@ -97,9 +126,9 @@ const ReportStore = types
         self.transactions.sortedItems.map(t => ({
           ...t,
           category: t.category || { id: 'transfer' },
-          payee: t.payee.name
+          payee: t.payee?.name
             ? t.payee
-            : { ...t.payee, name: t.payee.account.name }
+            : { ...t.payee, name: t.payee?.account?.name }
         })),
         props
       );
