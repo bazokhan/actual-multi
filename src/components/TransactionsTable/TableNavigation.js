@@ -1,5 +1,10 @@
 import PropTypes from 'prop-types';
-import { Grid, IconButton, Text } from '@chakra-ui/react';
+import {
+  Flex,
+  Grid,
+  IconButton,
+  Text
+} from '@chakra-ui/react';
 import {
   ChevronRightIcon,
   ChevronLeftIcon,
@@ -21,7 +26,7 @@ const TableNavigation = ({
   <Grid
     gridTemplateColumns="auto auto 1fr auto auto"
     height="100%"
-    overflowY="auto"
+    overflow="hidden"
     {...props}
   >
     <IconButton
@@ -36,9 +41,11 @@ const TableNavigation = ({
       isDisabled={isFirstPage}
       icon={<ChevronLeftIcon />}
     />
-    <Text>
-      Page {pageNumber} of {totalPagesNumber}
-    </Text>
+    <Flex justifyContent="center" alignItems="center">
+      <Text>
+        Page {pageNumber} of {totalPagesNumber}
+      </Text>
+    </Flex>
     <IconButton
       colorScheme="gray"
       onClick={getNextPage}

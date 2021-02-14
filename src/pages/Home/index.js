@@ -6,8 +6,8 @@ import {
   FormLabel,
   Grid,
   Input,
-  Text,
-  useColorMode
+  Text
+  // useColorMode
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 import { useForm } from 'react-hook-form';
@@ -32,7 +32,7 @@ const Home = () => {
     });
   };
 
-  const { colorMode, toggleColorMode } = useColorMode();
+  // const { colorMode, toggleColorMode } = useColorMode();
 
   const {
     accounts,
@@ -66,12 +66,6 @@ const Home = () => {
           ))}
         </Flex>
       </Cell>
-
-      <Button onClick={toggleColorMode}>
-        Toggle {colorMode === 'light' ? 'Dark' : 'Light'}
-      </Button>
-
-      <Link to="/reports/create">Create Report</Link>
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <FormLabel htmlFor="name">

@@ -1,70 +1,38 @@
-import PropTypes from 'prop-types';
-import { Grid, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Grid,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalHeader,
+  ModalOverlay,
+  useColorMode
+} from '@chakra-ui/react';
 import { useState } from 'react';
 import { v4 as uuid } from 'uuid';
 import { observer } from 'mobx-react';
-import ReportCreationWizard from '../../../components/ReportCreationWizard';
+import ReportWizard from '../../../components/ReportWizard';
 import TransactionsTable from '../../../components/TransactionsTable';
 import ReportStore from '../../../stores/ReportStore';
+import TransactionsReport from '../../../components/TransactionsReport';
 
 const reportStore = ReportStore.create({ id: uuid() });
-
-const Chunk = observer(({ chunk, ...props }) =>
-  chunk.chunked === 'Complete' ? (
-    <Grid
-      border="solid 1px green"
-      gridTemplateRows="auto auto"
-      gridColumn="2"
-      {...props}
-    >
-      <Text>
-        {chunk.prop.name} {chunk.identifier.name}
-      </Text>
-      <Text>Sum: {(chunk.sum / 100).toFixed(2)}</Text>
-    </Grid>
-  ) : (
-    <Grid
-      border="solid 1px red"
-      gridTemplateColumns="1fr 1fr"
-      columnGap="10px"
-      gridColumn="1"
-      {...props}
-    >
-      <Grid gridTemplateRows="auto auto">
-        <Text>
-          {chunk.prop.name} {chunk.identifier.name}
-        </Text>
-        <Text>Sum: {(chunk.sum / 100).toFixed(2)}</Text>
-      </Grid>
-
-      {chunk.chunked?.map(c => (
-        <Chunk key={c.prop.name} chunk={c} />
-      ))}
-    </Grid>
-  )
-);
-
-Chunk.propTypes = {
-  chunk: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.array
-  ]).isRequired
-};
 
 const Create = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const onConfirm = async ({
-    // transactions,
     loading: lazyLoading,
     error: lazyError
   }) => {
-    // reportStore.transactions.updateItems(transactions);
     setLoading(lazyLoading);
     setError(lazyError);
   };
   const onCancel = () => {};
+  const { colorMode } = useColorMode();
 
   return (
     <Grid
@@ -73,20 +41,88 @@ const Create = () => {
       overflow="hidden"
       columnGap="30px"
     >
-      <Grid height="100%" minWidth="400px" overflow="auto">
-        {reportStore.chunked === 'Complete'
-          ? null
-          : reportStore.chunked?.map(chunk => (
-              <Chunk chunk={chunk} key={chunk.prop.name} />
-            ))}
-      </Grid>
-      <TransactionsTable
-        store={reportStore.transactions}
-        loading={loading}
-        error={error}
-        tableSize={20}
-      />
-      <ReportCreationWizard
+      <Modal
+        isOpen={
+          reportStore.activeTransactions?.sortedItems
+            ?.length
+        }
+        onClose={() =>
+          reportStore.activeTransactions?.updateItems([])
+        }
+      >
+        <ModalOverlay />
+        <ModalContent
+          maxWidth="80vw"
+          minWidth="80vw"
+          maxHeight="80vh"
+          minHeight="80vh"
+          margin="auto"
+          overflow="auto"
+        >
+          <ModalHeader>
+            <ModalCloseButton />
+          </ModalHeader>
+          <ModalBody
+            bg={colorMode === 'light' ? 'bg.200' : 'bg.800'}
+          >
+            <TransactionsTable
+              store={reportStore.activeTransactions}
+              tableSize={20}
+            />
+          </ModalBody>
+        </ModalContent>
+      </Modal>
+      <Box
+        width="100%"
+        height="100%"
+        minWidth="600px"
+        borderColor={
+          colorMode === 'light' ? 'bg.300' : 'bg.700'
+        }
+        borderWidth="1px"
+        overflow="auto"
+      >
+        {Array.isArray(reportStore.chunked) ? (
+          <TransactionsReport reportStore={reportStore} />
+        ) : (
+          <Flex
+            width="100%"
+            height="100%"
+            justifyContent="center"
+            alignItems="center"
+          >
+            Report will appear here
+          </Flex>
+        )}
+      </Box>
+      <Box
+        width="100%"
+        height="100%"
+        borderColor={
+          colorMode === 'light' ? 'bg.300' : 'bg.700'
+        }
+        borderWidth="1px"
+        overflow="auto"
+      >
+        {reportStore.transactions.sortedItems.length ? (
+          <TransactionsTable
+            store={reportStore.transactions}
+            loading={loading}
+            error={error}
+            tableSize={20}
+          />
+        ) : (
+          <Flex
+            width="100%"
+            height="100%"
+            justifyContent="center"
+            alignItems="center"
+          >
+            Transactions Table will appear here
+          </Flex>
+        )}
+      </Box>
+      <ReportWizard
         store={reportStore}
         onCancel={onCancel}
         onConfirm={onConfirm}

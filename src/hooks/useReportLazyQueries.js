@@ -11,12 +11,14 @@ const queryParams = {
     account: {
       id: {
         _in: '$accounts'
-      }
+      },
+      tombstone: { _eq: 0 }
     },
     date: {
       _gt: '$startDate',
       _lt: '$endDate'
-    }
+    },
+    tombstone: { _eq: 0 }
   }
 };
 
@@ -28,7 +30,8 @@ const aggQueryParams = {
     account: {
       id: {
         _in: '$accounts'
-      }
+      },
+      tombstone: { _eq: 0 }
     },
     date: {
       _gt: '$startDate',
@@ -37,13 +40,16 @@ const aggQueryParams = {
     category: {
       id: {
         _in: '$categories'
-      }
+      },
+      tombstone: { _eq: 0 }
     },
     payee: {
       id: {
         _in: '$payees'
-      }
-    }
+      },
+      tombstone: { _eq: 0 }
+    },
+    tombstone: { _eq: 0 }
   }
 };
 

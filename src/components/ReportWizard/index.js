@@ -10,21 +10,16 @@ import {
 } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
 import { getSnapshot } from 'mobx-state-tree';
-import AccountStoreSelectStep from './ReportCreationSteps/AccountStoreSelect';
-import DateStoreStep from './ReportCreationSteps/DateStore';
-// import ReportStoreStep from './ReportCreationSteps/ReportStore';
-import TStoreSelectCategoryStep from './ReportCreationSteps/TStoreSelectCategory';
-import TStoreSelectPayeeStep from './ReportCreationSteps/TStoreSelectPayee';
-import SuccessMessageStep from './ReportCreationSteps/SuccessMessage';
-import mapTDataToTStore from '../helpers/mapTDataToTStore';
-import useReportLazyQueries from '../hooks/useReportLazyQueries';
-import useAccounts from '../hooks/useAccounts';
+import AccountStoreSelectStep from './AccountStoreSelect';
+import DateStoreStep from './DateStore';
+import TStoreSelectCategoryStep from './TStoreSelectCategory';
+import TStoreSelectPayeeStep from './TStoreSelectPayee';
+import ReportStoreSelectPropsStep from './ReportStoreSelectProps';
+import mapTDataToTStore from '../../helpers/mapTDataToTStore';
+import useReportLazyQueries from '../../hooks/useReportLazyQueries';
+import useAccounts from '../../hooks/useAccounts';
 
-const ReportCreationWizard = ({
-  store,
-  onConfirm,
-  onCancel
-}) => {
+const ReportWizard = ({ store, onConfirm, onCancel }) => {
   const [step, setStep] = useState(0);
 
   const {
@@ -40,11 +35,11 @@ const ReportCreationWizard = ({
       store.transactions.updateItems(properTransactions);
       setStep(step + 1);
     },
-    onAggregateQueryCompleted: nextData => {
-      const properTransactions = nextData?.transactions_aggregate?.nodes?.map(
-        mapTDataToTStore
-      );
-      store.transactions.updateItems(properTransactions);
+    onAggregateQueryCompleted: () => {
+      // const properTransactions = nextData?.transactions_aggregate?.nodes?.map(
+      //   mapTDataToTStore
+      // );
+      // store.transactions.updateItems(properTransactions);
     }
   });
 
@@ -136,7 +131,9 @@ const ReportCreationWizard = ({
     },
     {
       id: 4,
-      component: <SuccessMessageStep />,
+      component: (
+        <ReportStoreSelectPropsStep store={store} />
+      ),
       onNext: onAggregateQuery,
       onPrev: () => setStep(step - 1)
     }
@@ -172,10 +169,10 @@ const ReportCreationWizard = ({
   );
 };
 
-ReportCreationWizard.propTypes = {
+ReportWizard.propTypes = {
   store: PropTypes.object.isRequired,
   onConfirm: PropTypes.func.isRequired,
   onCancel: PropTypes.func.isRequired
 };
 
-export default observer(ReportCreationWizard);
+export default observer(ReportWizard);

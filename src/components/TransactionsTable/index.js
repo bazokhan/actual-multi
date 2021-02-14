@@ -1,12 +1,12 @@
 import PropTypes from 'prop-types';
 import { Grid } from '@chakra-ui/react';
 import { observer } from 'mobx-react';
-import usePagination from '../hooks/usePagination';
 import TableHeader from './TableHeader';
 import TableRow from './TableRow';
 import TableNavigation from './TableNavigation';
 import TableTotalRow from './TableTotalRow';
-import Cell from './Cell';
+import Cell from '../Cell';
+import usePagination from '../../hooks/usePagination';
 
 const TransactionsTable = ({
   store,

@@ -1,8 +1,8 @@
 import PropTypes from 'prop-types';
 import { Text } from '@chakra-ui/react';
-import EditableDiv from '../ui/EditableDiv';
-import SelectableDiv from '../ui/SelectableDiv';
-import formatDate from '../helpers/formatDate';
+import EditableDiv from '../../ui/EditableDiv';
+import SelectableDiv from '../../ui/SelectableDiv';
+import formatDate from '../../helpers/formatDate';
 
 const TableRow = ({ item }) => (
   <>

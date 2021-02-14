@@ -4,6 +4,7 @@ import AccountListStore from '../../models/AccountList.store';
 import TransactionListStore from '../../models/TransactionList.store';
 import CalendarStore from '../CalendarStore';
 import sum from '../../helpers/sum';
+import REPORT_PROPS from '../../constants/ReportProps';
 
 const chunk = (transactions, prop) => {
   if (!transactions?.length || !prop) {
@@ -55,6 +56,10 @@ const multiChunk = (transactions, props) => {
 const ReportStore = types
   .model('Report', {
     id: types.identifier,
+    selectedProps: types.optional(
+      types.array(types.string),
+      []
+    ),
     date: types.optional(
       CalendarStore,
       getSnapshot(CalendarStore.create({}))
@@ -67,61 +72,19 @@ const ReportStore = types
       TransactionListStore,
       getSnapshot(TransactionListStore.create({}))
     ),
+    activeTransactions: types.optional(
+      TransactionListStore,
+      getSnapshot(TransactionListStore.create({}))
+    ),
     crated_at: types.maybeNull(types.Date)
   })
   .views(self => ({
+    get props() {
+      return self.selectedProps
+        .map(p => REPORT_PROPS.find(P => P.name === p))
+        .filter(p => p);
+    },
     get chunked() {
-      const props = [
-        {
-          name: 'account',
-          itemIdentifier: item => item.account?.id,
-          chunkIdentifier: item => item.account,
-          validator: (c, item) =>
-            c.identifier.id === item.account?.id
-        },
-        {
-          name: 'date',
-          itemIdentifier: item => item.date,
-          chunkIdentifier: item => ({
-            name: `${item.date?.getFullYear()} / ${
-              item.date?.getMonth() + 1
-            }`,
-            value: item.date
-          }),
-          validator: (c, item) =>
-            c.identifier.value?.getMonth() ===
-              item.date?.getMonth() &&
-            c.identifier.value?.getFullYear() ===
-              item.date?.getFullYear()
-        },
-        {
-          name: 'type',
-          itemIdentifier: item => item.amount < 0,
-          chunkIdentifier: item =>
-            item.amount > 0
-              ? {
-                  name: 'recieved',
-                  value: false
-                }
-              : { name: 'paid', value: true },
-          validator: (c, item) =>
-            c.identifier.value === item.amount < 0
-        },
-        {
-          name: 'category',
-          itemIdentifier: item => item.category?.id,
-          chunkIdentifier: item => item.category,
-          validator: (c, item) =>
-            c.identifier.id === item.category?.id
-        },
-        {
-          name: 'payee',
-          itemIdentifier: item => item.payee?.id,
-          chunkIdentifier: item => item.payee,
-          validator: (c, item) =>
-            c.identifier.id === item.payee?.id
-        }
-      ];
       return multiChunk(
         self.transactions.sortedItems.map(t => ({
           ...t,
@@ -130,8 +93,30 @@ const ReportStore = types
             ? t.payee
             : { ...t.payee, name: t.payee?.account?.name }
         })),
-        props
+        self.props
       );
+    }
+  }))
+  .actions(self => ({
+    addProp: newProp => {
+      if (!self.selectedProps.includes(newProp)) {
+        self.selectedProps.push(newProp);
+      }
+    },
+    removeProp: newProp => {
+      self.selectedProps = self.selectedProps.filter(
+        p => p !== newProp
+      );
+    },
+    clearProps: () => {
+      self.selectedProps = [];
+    },
+    toggleProp: newProp => {
+      if (self.selectedProps.includes(newProp)) {
+        self.removeProp(newProp);
+      } else {
+        self.addProp(newProp);
+      }
     }
   }));
 
