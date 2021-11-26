@@ -30,13 +30,13 @@ const TransactionsTable = ({
       overflowY="hidden"
       {...props}
     >
-      <Grid gridTemplateColumns="repeat(8, 1fr)">
+      <Grid gridTemplateColumns="repeat(9, 1fr)">
         <Cell error={error} loading={loading}>
           <TableHeader store={store} />
         </Cell>
       </Grid>
       <Grid
-        gridTemplateColumns="repeat(8, 1fr)"
+        gridTemplateColumns="repeat(9, 1fr)"
         overflowY="auto"
         alignItems="start"
         alignContent="start"
@@ -47,11 +47,11 @@ const TransactionsTable = ({
           ))}
         </Cell>
       </Grid>
-      <Grid gridTemplateColumns="repeat(8, 1fr)">
+      <Grid gridTemplateColumns="repeat(9, 1fr)">
         <Cell error={error} loading={loading}>
           <TableTotalRow store={store} />
           <TableNavigation
-            gridColumn="1 / 9"
+            gridColumn="1 / 10"
             {...navigationProps}
           />
         </Cell>
